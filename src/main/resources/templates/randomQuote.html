@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="header"></div>
+<div th:insert="common"></div>
+<div class="justify-content-center align-items-center container d-flex h-100 mt-5 col-md-6">
+    <div class="card-body">
+        <h5 class="card-title text-center">Цитата с баша</h5>
+        <div th:if="${quote}!= null" class="card-text">
+            [(${quote})]
+        </div>
+    </div>
+</div>
+<div th:insert="footer"></div>
+
+</body>
+</html>

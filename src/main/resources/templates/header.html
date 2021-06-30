@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom" th:fragment="header">
+    <a class="navbar-brand ml-5" href="/">
+        <img alt="" class="d-inline-block align-top" height="70" th:src="@{/images/pegasus.png}"
+             width="70">
+    </a>
+    <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+            class="navbar-toggler"
+            data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/randomQuote">Случайная цитата <span class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+        <div class="alert alert-success text-center mt-3 mr-3" role="alert" th:if="${login}!= null">
+            <span>Вы успешно авторизовались как </span>
+            <strong th:text="${login}"></strong>
+        </div>
+
+        <form class="form-inline my-2 my-lg-0">
+            <p class="alert alert-success text-center mt-3 mr-3" th:if="${message} != null" th:text="${message}"></p>
+            <a class="btn btn-primary blue my-2 my-sm-0 mr-5" href="/login" role="button"
+               th:if="${login} == null">Войти</a>
+            <a class="btn btn-primary blue my-2 my-sm-0 mr-3" href="/profile/" role="button" th:if="${login} != null">Профиль</a>
+            <a class="btn btn-primary blue my-2 my-sm-0 mr-5" href="/logout" role="button" th:if="${login} != null">Выйти</a>
+        </form>
+    </div>
+</nav>
