@@ -2,10 +2,10 @@ package com.peg2s.models;
 
 import com.peg2s.models.enums.Role;
 import com.peg2s.models.enums.Sex;
-import org.apache.commons.lang3.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 

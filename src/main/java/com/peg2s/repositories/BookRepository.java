@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface BookRepository extends CrudRepository<Book, Long> {
     List<Book> findAllByGenres_Genre(@Param("genre") String genre);
+    List<Book> findAllByAuthors_Id(Long id);
 }

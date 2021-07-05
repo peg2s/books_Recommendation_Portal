@@ -1,9 +1,6 @@
 package com.peg2s.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +13,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @Entity
 @Table(name="books")
+@EqualsAndHashCode(callSuper = true)
 public class Book extends AbstractIdentifiableObject implements Serializable {
 
     private String title;
@@ -34,7 +32,6 @@ public class Book extends AbstractIdentifiableObject implements Serializable {
 
     private Double avgRating;
 
-    private int personalRating;
 }
 
 
