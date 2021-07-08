@@ -2,19 +2,20 @@
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Главная страница</title>
 </head>
 <body>
+<div th:insert="common"></div>
 <div th:insert="header"></div>
-<div th:if="${quotes}!=null" class="card-columns container mx-10 my-3">
+<div class="card-columns container mx-10 my-3" th:if="${quotes}!=null">
     <div th:each="quote : ${quotes}">
         <div class="card">
             <div class="card-body">
                 [(${quote})]
             </div>
-        </div>    </div>
+        </div>
+    </div>
 </div>
-<div th:insert="common"></div>
 
 </body>
 <div class="mt-3" th:insert="footer"></div>

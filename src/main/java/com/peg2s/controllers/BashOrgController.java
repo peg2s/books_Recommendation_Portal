@@ -19,8 +19,10 @@ public class BashOrgController {
 
     @GetMapping("/randomQuote")
     public String getRandomQuote(Model model, HttpServletRequest request) {
-        model.addAttribute("login", request.getUserPrincipal().getName());
+        if (request.getUserPrincipal() != null && request.getUserPrincipal().getName() != null) {
+            model.addAttribute("login", request.getUserPrincipal().getName());
+        }
         model.addAttribute("quote", bashOrgService.getRandomQuote());
-        return "/randomQuote";
+        return "randomQuote";
     }
 }

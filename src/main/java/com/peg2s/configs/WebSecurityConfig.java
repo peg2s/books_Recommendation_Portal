@@ -1,35 +1,43 @@
 package com.peg2s.configs;
 
+import com.peg2s.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import javax.sql.DataSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final DataSource dataSource;
 
-    public WebSecurityConfig(DataSource dataSource) {
-        this.dataSource = dataSource;
+    private final UserService userService;
+    private PasswordEncoder passwordEncoder;
+    public WebSecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/", "/register", "/images/**", "/addBook", "/books", "/**")
-                    .permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/", "/register", "/images/**", "/addBook", "/books", "/**")
+                .permitAll()
                 .anyRequest().authenticated()
-                    .and()
+                .and()
                 .formLogin()
                 .loginPage("/login")
+                .failureUrl("/loginError")
                 .permitAll()
-                    .and()
+                .and()
                 .logout()
                 .permitAll();
     }
@@ -37,10 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .jdbcAuthentication()
-                .dataSource(dataSource)
-                .passwordEncoder(new BCryptPasswordEncoder())
-                .usersByUsernameQuery("select login, password, 'true' from users where lower(login)=lower(?)")
-                .authoritiesByUsernameQuery("select role, login from users where lower(login)=lower(?)");
+                .userDetailsService(userService)
+                .passwordEncoder(passwordEncoder);
     }
 }

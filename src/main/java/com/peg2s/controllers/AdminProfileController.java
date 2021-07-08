@@ -1,13 +1,11 @@
 package com.peg2s.controllers;
 
-import com.google.common.collect.Lists;
-import com.peg2s.models.PersonalRating;
 import com.peg2s.models.User;
 import com.peg2s.models.enums.Role;
 import com.peg2s.models.enums.Sex;
-import com.peg2s.repositories.RatingRepository;
 import com.peg2s.repositories.UserRepository;
-import com.peg2s.service.UserService;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,36 +19,28 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/profile")
+@RequestMapping("/admin/")
 @SessionAttributes({"sex", "login"})
-public class UserProfileController {
+public class AdminProfileController {
     private final UserRepository userRepository;
-    private final RatingRepository ratingRepository;
-    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private List<User> userList;
 
-    public UserProfileController(UserRepository userRepository,
-                                 RatingRepository ratingRepository,
-                                 UserService userService, PasswordEncoder passwordEncoder) {
+    public AdminProfileController(UserRepository userRepository,
+                                  @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.ratingRepository = ratingRepository;
-        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/")
     public String getUserProfile(Model model, HttpServletRequest request) {
         User user = userRepository.findByLoginIgnoreCase(request.getUserPrincipal().getName());
-        if (user.getRoles().contains(Role.ROLE_ADMIN)) {
-            return "redirect:/admin/";
-        }
-        List<PersonalRating> likedBooks = ratingRepository.findByUser_login(user.getLogin());
-        List<List<PersonalRating>> partitionedListOfLikedBooks = Lists.partition(likedBooks, 4);
-        model.addAttribute("partitionedListOfLikedBooks", partitionedListOfLikedBooks);
+        userList = (List<User>) userRepository.findAll();
         model.addAttribute("user", user);
         model.addAttribute("login", user.getLogin());
         model.addAttribute("sex", Arrays.asList(Sex.values()));
-        return "profile";
+        model.addAttribute("userList", userList);
+        return "adminProfile";
     }
 
     @PostMapping("/update")
@@ -60,7 +50,28 @@ public class UserProfileController {
         if(!pass.equals(userFromDb.getPassword())) {
             user.setPassword(passwordEncoder.encode(pass));
         }
-        userService.updateProfile(user);
-        return "profile";
+        userRepository.save(user);
+        return "adminProfile";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/updateByAdmin")
+    public String updateProfileByAdmin(User user, String id, String isAdmin) {
+        userList = (List<User>) userRepository.findAll();
+
+        String pass = user.getPassword();
+        User userFromDb = userRepository.findById(Long.valueOf(id)).get();
+        if(!pass.equals(userFromDb.getPassword())) {
+            userFromDb.setPassword(passwordEncoder.encode(pass));
+        }
+        if(isAdmin != null && !userFromDb.getRoles().contains(Role.ROLE_ADMIN)) {
+            userFromDb.getRoles().add(Role.ROLE_ADMIN);
+        } else if (isAdmin == null && userFromDb.getRoles().contains(Role.ROLE_ADMIN)) {
+            userFromDb.getRoles().remove(Role.ROLE_ADMIN);
+        }
+        userFromDb.setDateOfBirth(user.getDateOfBirth());
+        userFromDb.setLogin(user.getLogin());
+        userRepository.save(userFromDb);
+        return "redirect:/admin/";
     }
 }

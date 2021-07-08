@@ -51,7 +51,6 @@
     <form method="POST" th:action="@{update}">
         <div class="mt-5 form-row justify-content-center align-items-center">
             <input name="id" th:value="${user.id}" type="hidden">
-            <input name="role" th:value="${user.role}" type="hidden">
             <div class="form-group col-md-6">
                 <small class="form-text text-muted text-center mb-1">Логин</small>
                 <input class="form-control" name="login" placeholder="Логин" th:value="${user.login}" type="text">
@@ -104,87 +103,95 @@
     </form>
 
 </div>
+<div th:if="${partitionedListOfLikedBooks}!=null and ${partitionedListOfLikedBooks.size()}!=0">
+    <p class="mt-3 mb-3 font-weight-bold text-center">Оцененные вами книги:</p>
 
-<p class="mt-3 mb-3 font-weight-bold text-center">Оцененные вами книги:</p>
+    <div class="carousel slide mt-3 mb-5 h-20 w-100" data-ride="carousel" id="demo">
+        <a th:if="${partitionedListOfLikedBooks.size()}!=1" class="carousel-control-prev" data-slide="prev" href="#demo">
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a th:if="${partitionedListOfLikedBooks.size()}!=1" class="carousel-control-next" data-slide="next" href="#demo">
+            <span class="carousel-control-next-icon"></span>
+        </a>
+        <!-- The slideshow -->
+        <div class="container carousel-inner no-padding text-center">
+            <th:block th:each="likedBooksList : ${partitionedListOfLikedBooks}">
+                <div class="carousel-item active" th:if="${partitionedListOfLikedBooks.get(0).equals(likedBooksList)}">
+                    <div class="col-md-3 col-sm-4 col-6" th:each="likedBook : ${likedBooksList}">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="text" th:text="'Название: ' + ${likedBook.book.title}"></div>
 
-<div class="carousel slide mt-3 mb-5 h-20 w-100" data-ride="carousel" id="demo">
-    <a class="carousel-control-prev" data-slide="prev" href="#demo">
-        <span class="carousel-control-prev-icon"></span>
-    </a>
-    <a class="carousel-control-next" data-slide="next" href="#demo">
-        <span class="carousel-control-next-icon"></span>
-    </a>
-    <!-- The slideshow -->
-    <div class="container carousel-inner no-padding">
-        <th:block th:each="likedBooksList : ${partitionedListOfLikedBooks}">
-            <div class="carousel-item active" th:if="${partitionedListOfLikedBooks.get(0).equals(likedBooksList)}">
-                <div class="col-md-3 col-sm-4 col-12" th:each="likedBook : ${likedBooksList}">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="text" th:text="'Название: ' + ${likedBook.book.title}"></div>
+                                <div th:if="${likedBook.book.authors.size()!=1}">
+                                    <a th:text="'Авторы: '"></a>
+                                    <th:block th:each="author : ${likedBook.book.authors}">
+                                        <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}"
+                                           th:text="${author}+';'"></a>
+                                    </th:block>
+                                </div>
+                                <div th:each="author: ${likedBook.book.authors}"
+                                     th:if="${likedBook.book.authors.size()==1}">
+                                    <a th:text="'Автор: '"></a>
+                                    <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}"
+                                       th:text="${author}"></a>
+                                </div>
 
-                            <div th:if="${likedBook.book.authors.size()!=1}">
-                                <a th:text="'Авторы: '"></a>
-                                 <th:block th:each="author : ${likedBook.book.authors}">
-                                     <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}" th:text="${author}+';'"></a>
-                                 </th:block>
+                                <div th:if="${likedBook.book.genres.size()!=1}"
+                                     th:text="'Жанры: ' + ${#strings.listJoin(likedBook.book.genres, ', ')}">
+                                </div>
+                                <div th:each="genre: ${likedBook.book.genres}"
+                                     th:if="${likedBook.book.genres.size()==1}">
+                                    <div th:text="'Жанр: ' + ${genre}"></div>
+                                </div>
+
+                                <div th:text="'Аннотация: ' + ${likedBook.book.annotation}"></div>
+                                <hr>
+                                <div th:text="'Вы оценили книгу на: ' + ${likedBook.rate} + '/5'"></div>
+
                             </div>
-                            <div th:each="author: ${likedBook.book.authors}" th:if="${likedBook.book.authors.size()==1}">
-                                 <a th:text="'Автор: '"></a>
-                                <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}" th:text="${author}"></a>
-                            </div>
-
-                            <div th:if="${likedBook.book.genres.size()!=1}"
-                                 th:text="'Жанры: ' + ${#strings.listJoin(likedBook.book.genres, ', ')}">
-                            </div>
-                            <div th:each="genre: ${likedBook.book.genres}" th:if="${likedBook.book.genres.size()==1}">
-                                <div th:text="'Жанр: ' + ${genre}"></div>
-                            </div>
-
-                            <div th:text="'Аннотация: ' + ${likedBook.book.annotation}"></div>
-                            <hr>
-                            <div th:text="'Вы оценили книгу на: ' + ${likedBook.rate} + '/5'"></div>
-
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="carousel-item" th:if="${!partitionedListOfLikedBooks.get(0).equals(likedBooksList)}">
-                <div class="col-md-3 col-sm-4 col-12" th:each="likedBook : ${likedBooksList}">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="text" th:text="'Название: ' + ${likedBook.book.title}"></div>
+                <div class="carousel-item" th:if="${!partitionedListOfLikedBooks.get(0).equals(likedBooksList)}">
+                    <div class="col-md-3 col-sm-4 col-12" th:each="likedBook : ${likedBooksList}">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="text" th:text="'Название: ' + ${likedBook.book.title}"></div>
 
-                            <div th:if="${likedBook.book.authors.size()!=1}">
-                                <a th:text="'Авторы: '"></a>
-                                <th:block th:each="author : ${likedBook.book.authors}">
-                                    <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}" th:text="${author}+';'"></a>
-                                </th:block>
-                            </div>
-                            <div th:each="author: ${likedBook.book.authors}" th:if="${likedBook.book.authors.size()==1}">
-                                <a th:text="'Автор: '"></a>
-                                <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}" th:text="${author}"></a>
-                            </div>
+                                <div th:if="${likedBook.book.authors.size()!=1}">
+                                    <a th:text="'Авторы: '"></a>
+                                    <th:block th:each="author : ${likedBook.book.authors}">
+                                        <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}"
+                                           th:text="${author}+';'"></a>
+                                    </th:block>
+                                </div>
+                                <div th:each="author: ${likedBook.book.authors}"
+                                     th:if="${likedBook.book.authors.size()==1}">
+                                    <a th:text="'Автор: '"></a>
+                                    <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}"
+                                       th:text="${author}"></a>
+                                </div>
 
-                            <div th:if="${likedBook.book.genres.size()!=1}"
-                                 th:text="'Жанры: ' + ${#strings.listJoin(likedBook.book.genres, ', ')}">
-                            </div>
-                            <div th:each="genre: ${likedBook.book.genres}" th:if="${likedBook.book.genres.size()==1}">
-                                <div th:text="'Жанр: ' + ${genre}"></div>
-                            </div>
+                                <div th:if="${likedBook.book.genres.size()!=1}"
+                                     th:text="'Жанры: ' + ${#strings.listJoin(likedBook.book.genres, ', ')}">
+                                </div>
+                                <div th:each="genre: ${likedBook.book.genres}"
+                                     th:if="${likedBook.book.genres.size()==1}">
+                                    <div th:text="'Жанр: ' + ${genre}"></div>
+                                </div>
 
-                            <div th:text="'Аннотация: ' + ${likedBook.book.annotation}"></div>
-                            <hr>
-                            <div th:text="'Вы оценили книгу на: ' + ${likedBook.rate} + '/5'"></div>
+                                <div th:text="'Аннотация: ' + ${likedBook.book.annotation}"></div>
+                                <hr>
+                                <div th:text="'Вы оценили книгу на: ' + ${likedBook.rate} + '/5'"></div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </th:block>
+            </th:block>
+        </div>
     </div>
 </div>
-
 </div>
 
 

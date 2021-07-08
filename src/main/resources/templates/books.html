@@ -3,19 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Список книг</title>
-    <style>
-        .rating-header {
-            margin-top: -10px;
-            margin-bottom: 10px;
-        }
-
-    </style>
-
 </head>
 <body>
 <div th:insert="header"></div>
 <div th:insert="common"></div>
-
 <form class="mt-3 justify-content-center align-items-center container d-flex" method="POST" th:action="@{/books}">
     <select class="custom-select custom-select-sm col-md-3" name="genre">
         <option th:value="all">Все жанры</option>
@@ -31,12 +22,17 @@
         <div th:each="book : ${books}">
             <div class="card">
                 <div class="card-body">
+                    
                     <div class="text" th:text="'Название: ' + ${book.title}"></div>
-
-                    <div th:if="${book.authors.size()!=1}"
-                         th:text="'Авторы: ' + ${#strings.listJoin(book.authors, ', ')}"></div>
+                    <div th:if="${book.authors.size()!=1}">
+                        <a th:text="'Авторы: '"></a>
+                        <th:block th:each="author : ${book.authors}">
+                            <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}" th:text="${author}+';'"></a>
+                        </th:block>
+                    </div>
                     <div th:each="author: ${book.authors}" th:if="${book.authors.size()==1}">
-                        <div th:text="'Автор: ' + ${author}"></div>
+                        <a th:text="'Автор: '"></a>
+                        <a th:href="'/authorBooks?id='+${author.id} + '&author=' + ${author}" th:text="${author}"></a>
                     </div>
 
                     <div th:if="${book.genres.size()!=1}"
@@ -54,63 +50,65 @@
 
                         <label class="control-label" for="rating">
                             <input name="selected_rating" required="required" th:id="${book.id}" type="hidden" value="">
-                            <input id="book" name="book" required="required" th:value="${book.id}" type="hidden">
+                            <input id="bookId" name="bookId" required="required" th:value="${book.id}" type="hidden">
                         </label>
-                        <h2 class="bold rating-header" style="">
+                        <h2 class="bold h6 text-center" style="">
 
-                            <span th:class="'selected-rating'+${book.id}">0</span><small> / 5</small>
+                            <span th:class="'selected-rating'+${book.id}">Вы еще не оценили эту книгу</span>
                         </h2>
-                        <button class="btnrating btn btn-default btn-lg" data-attr="1"
-                                th:data-id="${book.id}"
-                                th:id="${book.id}+'rating-star-1'" type="submit">
-                            <i aria-hidden="true" class="fa fa-star"></i>
-                        </button>
-                        <button class="btnrating btn btn-default btn-lg" data-attr="2"
-                                th:data-id="${book.id}"
-                                th:id="${book.id}+'rating-star-2'" type="submit">
-                            <i aria-hidden="true" class="fa fa-star"></i>
-                        </button>
-                        <button class="btnrating btn btn-default btn-lg" data-attr="3"
-                                th:data-id="${book.id}"
-                                th:id="${book.id}+'rating-star-3'" type="submit">
-                            <i aria-hidden="true" class="fa fa-star"></i>
-                        </button>
-                        <button class="btnrating btn btn-default btn-lg" data-attr="4"
-                                th:data-id="${book.id}"
-                                th:id="${book.id}+'rating-star-4'" type="submit">
-                            <i aria-hidden="true" class="fa fa-star"></i>
-                        </button>
-                        <button class="btnrating btn btn-default btn-lg" data-attr="5"
-                                th:data-id="${book.id}"
-                                th:id="${book.id}+'rating-star-5'" type="submit">
-                            <i aria-hidden="true" class="fa fa-star"></i>
-                        </button>
+                        <div class="text-center">
+                            <button class="btnrating btn btn-default btn-md" data-attr="1"
+                                    th:data-id="${book.id}"
+                                    th:id="${book.id}+'rating-star-1'" type="submit">
+                                <i aria-hidden="true" class="fa fa-star"></i>
+                            </button>
+                            <button class="btnrating btn btn-default btn-md" data-attr="2"
+                                    th:data-id="${book.id}"
+                                    th:id="${book.id}+'rating-star-2'" type="submit">
+                                <i aria-hidden="true" class="fa fa-star"></i>
+                            </button>
+                            <button class="btnrating btn btn-default btn-md" data-attr="3"
+                                    th:data-id="${book.id}"
+                                    th:id="${book.id}+'rating-star-3'" type="submit">
+                                <i aria-hidden="true" class="fa fa-star"></i>
+                            </button>
+                            <button class="btnrating btn btn-default btn-md" data-attr="4"
+                                    th:data-id="${book.id}"
+                                    th:id="${book.id}+'rating-star-4'" type="submit">
+                                <i aria-hidden="true" class="fa fa-star"></i>
+                            </button>
+                            <button class="btnrating btn btn-default btn-md" data-attr="5"
+                                    th:data-id="${book.id}"
+                                    th:id="${book.id}+'rating-star-5'" type="submit">
+                                <i aria-hidden="true" class="fa fa-star"></i>
+                            </button>
+                        </div>
                     </form>
 
                 </div>
             </div>
             <th:block th:each="ratedBook : ${ratedBooks}">
-                <script th:inline="javascript" th:if="${ratedBook.book.id.equals(book.id)}">
+                <script th:if="${ratedBook.book.id.equals(book.id)}" th:inline="javascript">
                     jQuery(document).ready(function ($) {
-                            var value = [[${ratedBook.rate}]];
-                            var id = [[${book.id}]];
+                        var value = [[${ratedBook.rate}]];
+                        var id = [[${book.id}]];
 
-                            var previous_value = $("#" + id).val();
+                        var previous_value = $("#" + id).val();
 
-                            $("#" + id).val(value);
+                        $("#" + id).val(value);
 
                             $(".selected-rating" + id).empty();
-                            $(".selected-rating" + id).html(value);
+                            $(".selected-rating" + id).html("Ваша оценка: " + value + "/5");
 
-                            for (i = 1; i <= value; ++i) {
-                                $("#" + id + "rating-star-" + i).toggleClass('btn-warning');
-                                $("#" + id + "rating-star-" + i).toggleClass('btn-default');
-                            }
+                        for (i = 1; i <= value; ++i) {
+                            $("#" + id + "rating-star-" + i).toggleClass('btn-warning');
+                            $("#" + id + "rating-star-" + i).toggleClass('btn-default');
+                        }
 
-                            for (ix = 1; ix <= previous_value; ++ix) {
-                                $("#" + id + "rating-star-" + ix).toggleClass('btn-warning');
-                                $("#" + id + "rating-star-" + ix).toggleClass('btn-default');
-                            }
+                        for (ix = 1; ix <= previous_value; ++ix) {
+                            $("#" + id + "rating-star-" + ix).toggleClass('btn-warning');
+                            $("#" + id + "rating-star-" + ix).toggleClass('btn-default');
+                        }
                     });
 
                 </script>
@@ -130,7 +128,7 @@
             $("#" + selected_id).val(selected_value);
 
             $(".selected-rating" + selected_id).empty();
-            $(".selected-rating" + selected_id).html(selected_value);
+            $(".selected-rating" + selected_id).html("Ваша оценка: " + selected_value + "/5");
 
             for (i = 1; i <= selected_value; ++i) {
                 $("#" + selected_id + "rating-star-" + i).toggleClass('btn-warning');
