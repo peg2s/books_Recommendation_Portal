@@ -3,20 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Главная страница</title>
+    <style>
+        /* CSS */
+        .list-rectangle {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .list-rectangle>li {
+            position: relative;
+            display: block;
+            margin-bottom: .25rem;
+            padding: .325rem .825rem .325rem 1.325rem;
+            color:  black;
+            background: #f6f6f6;
+        }
+        .list-rectangle>li:last-child {
+            margin-bottom: 0;
+        }
+        .list-rectangle>li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0.5rem;
+            background: #8b8b8b;
+        }
+    </style>
 </head>
 <body>
-<div th:insert="common"></div>
-<div th:insert="header"></div>
-<div class="card-columns container mx-10 my-3" th:if="${quotes}!=null">
-    <div th:each="quote : ${quotes}">
-        <div class="card">
-            <div class="card-body">
-                [(${quote})]
-            </div>
+<div th:insert="fragments/common"></div>
+<div th:insert="fragments/header"></div>
+
+<div class="card text-center">
+
+    <div class="card-body mt-2 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h5 class="card-title">Добро пожаловать!</h5>
+       <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#collapseList" role="button">Цели данного проекта</a>
+        <div class="collapse" id="collapseList">
+        <p class="card-text">
+        <ol class="list-rectangle container col-xs-8 col-sm-8 col-md-8 col-lg-6">
+            <li>Немного попрактиковаться с UI (bootstrap и js)</li>
+            <li>Попробовать с нуля создать цельный продукт</li>
+            <li>Получить дополнительный опыт в работе с Postgres, Spring, MQ и т.д.</li>
+            <li>В идеале дойти до релизного состояния и приносить пользу людям :)</li>
+        </ol>
+        </p>
         </div>
+    </div>
+    <div class="card-footer text-muted">
+        <span>В настоящее время проект находится на стадии разработки.</span>
+        <span>Текущий внешний вид и функционал могут отличаться от того будет в будущем.</span>
+        <br>
+        <p>P.S.: для входа под учетной записью администратора в тестовых целях используйте связку <u>admin / password</u></p>
     </div>
 </div>
 
+<div th:if="${books}!=null">
+    <div th:insert="fragments/booksFragment"></div>
+</div>
+
 </body>
-<div class="mt-3" th:insert="footer"></div>
+<div class="mt-3" th:insert="fragments/footer"></div>
 </html>

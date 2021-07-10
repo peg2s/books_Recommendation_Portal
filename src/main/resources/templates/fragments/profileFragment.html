@@ -1,45 +1,41 @@
-<!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Страница регистрации</title>
-</head>
-<body>
-<div th:insert="fragments/header"></div>
-<div class="alert alert-warning text-center mt-3" role="alert" th:if="${warning}!= null" th:text="${warning}"></div>
-
+<span th:fragment="profileFragment">
+ <div class="alert alert-warning text-center mt-3" role="alert" th:if="${warning}!= null" th:text="${warning}"></div>
 <div class="justify-content-center align-items-center container d-flex h-100">
-    <form method="POST" th:action="@{/register}">
+    <form method="POST" th:action="@{update}">
         <div class="mt-5 form-row justify-content-center align-items-center">
+            <input name="id" th:value="${user.id}" type="hidden">
             <div class="form-group col-md-6">
                 <small class="form-text text-muted text-center mb-1">Логин</small>
-                <input class="form-control" name="login" placeholder="Логин" type="text">
+                <input class="form-control" name="login" placeholder="Логин" th:value="${user.login}" type="text">
             </div>
             <div class="form-group col-md-6">
                 <small class="form-text text-muted text-center mb-1">Пароль</small>
-                <input class="form-control" name="password" placeholder="Пароль" type="password">
+                <input class="form-control" name="password" placeholder="Пароль" th:value="${user.password}"
+                       type="password">
             </div>
         </div>
 
         <div class="mt-1 form-row justify-content-center align-items-center">
             <div class="form-group col-md-6">
                 <small class="form-text text-muted text-center mb-1">Имя</small>
-                <input class="form-control" name="firstName" placeholder="Имя" type="text">
+                <input class="form-control" name="firstName" placeholder="Имя" th:value="${user.firstName}" type="text">
             </div>
             <div class="form-group col-md-6">
                 <small class="form-text text-muted text-center mb-1">Фамилия</small>
-                <input class="form-control" name="lastName" placeholder="Фамилия" type="text">
+                <input class="form-control" name="lastName" placeholder="Фамилия" th:value="${user.lastName}"
+                       type="text">
             </div>
         </div>
 
         <div class="mt-1 form-row justify-content-center align-items-center">
             <div class="form-group col-md-6">
                 <small class="form-text text-muted text-center mb-1">Адрес электронной почты</small>
-                <input class="form-control" name="email" placeholder="E-mail" type="text">
+                <input class="form-control" name="email" placeholder="E-mail" th:value="${user.email}" type="text">
             </div>
             <div class="form-group col-md-6">
-                <small class="form-text text-muted datepicker-inline mb-1">Дата рождения</small>
-                <input class="form-control" name="dateOfBirth" placeholder="" type="date">
+                <small class="form-text text-muted text-center datepicker-inline mb-1">Дата рождения</small>
+                <input class="form-control" name="dateOfBirth" placeholder="" th:value="${user.dateOfBirth}"
+                       type="date">
             </div>
         </div>
 
@@ -55,13 +51,9 @@
         </div>
         <br>
         <div class="mt-3 mb-5 form-row justify-content-center align-items-center">
-            <button class="btn btn-primary text-center" type="submit">Зарегистрироваться</button>
+            <button class="btn btn-primary text-center" type="submit">Сохранить</button>
         </div>
     </form>
 
 </div>
-<div th:insert="fragments/common"></div>
-<div th:insert="fragments/footer"></div>
-
-</body>
-</html>
+</span>

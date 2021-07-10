@@ -1,0 +1,46 @@
+<span th:fragment="userListFragment">
+
+                <div class="justify-content-center align-items-center container d-flex h-100 my-5">
+                    <table class="table  table-responsive table-sm-5">
+                        <thead>
+                        <tr>
+                            <th> ФИО</th>
+                            <th> ДАТА РОЖДЕНИЯ</th>
+                            <th> ЛОГИН</th>
+                            <th> ПАРОЛЬ</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr th:each="user : ${userList}">
+                            <form method="POST" th:action="@{updateByAdmin}">
+                                <input name="id" th:value="${user.id}" type="hidden">
+                                <td><span th:text="${user.getFullName()}"> ФИО </span></td>
+                                <td><input class="form-control" name="dateOfBirth" placeholder="" th:value="${user.dateOfBirth}"
+                                           type="date">
+                                <td>
+                                    <input class="form-control" name="login" placeholder="Логин" th:value="${user.login}" type="text">
+                                </td>
+                                </td>
+                                <td>
+                                    <input class="form-control" name="password" placeholder="Пароль" th:value="${user.password}"
+                                           type="password">
+                                </td>
+                                <td>
+                                    <div class="form-check" th:if="${user.login != login}">
+                                        <input class="checkbox-1x" id="isAdmin" name="isAdmin" th:checked="${user.isAdmin()}"
+                                               type="checkbox">
+                                        <label class="form-check-label ml-2 mt-2" for="isAdmin">
+                                            Права админа
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary text-center" type="submit">Сохранить</button>
+                                </td>
+                            </form>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+</span>

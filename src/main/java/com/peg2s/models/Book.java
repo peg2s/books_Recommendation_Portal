@@ -32,6 +32,7 @@ public class Book extends AbstractIdentifiableObject implements Serializable {
 
     private Double avgRating;
 
+    private Boolean isApproved;
 }
 
 

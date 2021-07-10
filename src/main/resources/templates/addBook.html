@@ -5,7 +5,7 @@
     <title text="Добавить новую книгу"></title>
 </head>
 <body>
-<div th:insert="header"></div>
+<div th:insert="fragments/header"></div>
 
 <div class="justify-content-center align-items-center container d-flex h-100">
     <form method="POST" th:action="@{addBook}">
@@ -49,8 +49,8 @@
     </form>
 
 </div>
-<div th:insert="common"></div>
-<div th:insert="footer"></div>
+<div th:insert="fragments/common"></div>
+<div th:insert="fragments/footer"></div>
 
 </body>
 </html>

@@ -14,15 +14,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class BookProcessingHelper {
+public class BookService {
     private final GenreRepository genreRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final RatingRepository ratingRepository;
     private final AuthorRepository authorRepository;
 
-    public BookProcessingHelper(GenreRepository genreRepository, BookRepository bookRepository,
-                                UserRepository userRepository, RatingRepository ratingRepository, AuthorRepository authorRepository) {
+    public BookService(GenreRepository genreRepository, BookRepository bookRepository,
+                       UserRepository userRepository, RatingRepository ratingRepository, AuthorRepository authorRepository) {
         this.genreRepository = genreRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
@@ -30,12 +30,29 @@ public class BookProcessingHelper {
         this.authorRepository = authorRepository;
     }
 
-    public void rateBook(String bookId, String userLogin, String rate) {
+    public void rateBook(String login, String bookId, String selected_rating) {
+        Integer rating = Integer.parseInt(selected_rating);
+        Long book_id = Long.valueOf(bookId);
+        Long user_id = userRepository.findByLoginIgnoreCase(login).getId();
+        if (ratingRepository.existsByBook_IdAndUser_Id(Long.valueOf(bookId), user_id)) {
+            overrideExistingRating(book_id, user_id, rating);
+        } else {
+            rateNewBook(login, book_id, rating);
+        }
+    }
+
+    private void rateNewBook(String login, Long bookId, Integer rate) {
         PersonalRating rating = new PersonalRating();
-        Book book = bookRepository.findById(Long.parseLong(bookId)).get();
+        Book book = bookRepository.findById(bookId).get();
         rating.setBook(book);
-        rating.setUser(userRepository.findByLoginIgnoreCase(userLogin));
-        rating.setRate(Integer.parseInt(rate));
+        rating.setUser(userRepository.findByLoginIgnoreCase(login));
+        rating.setRate(rate);
+        ratingRepository.save(rating);
+    }
+
+    private void overrideExistingRating(Long bookId, Long userId, Integer selected_rating) {
+        PersonalRating rating = ratingRepository.findByBook_IdAndUser_Id(bookId, userId);
+        rating.setRate(selected_rating);
         ratingRepository.save(rating);
     }
 
@@ -91,7 +108,22 @@ public class BookProcessingHelper {
             author.getBooks().add(book);
         });
         book.setAuthors(authors);
+        book.setIsApproved(false);
         return book;
+    }
+
+    public List<Book> getBooksForApprove() {
+        return bookRepository.findByIsApprovedFalse();
+    }
+
+    public void approveBooks(String bookId, String isApprovedByAdmin) {
+        Book book = bookRepository.findById(Long.valueOf(bookId)).get();
+        book.setIsApproved(isApprovedByAdmin != null);
+        bookRepository.save(book);
+    }
+
+    public void importBooksToDB() {
+
     }
 }
 

@@ -73,7 +73,6 @@
             <artifactId>guava</artifactId>
             <version>10.0.1</version>
         </dependency>
-
     </dependencies>
 
     <build>

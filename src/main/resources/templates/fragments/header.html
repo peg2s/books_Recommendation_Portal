@@ -1,0 +1,96 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom" th:fragment="header">
+    <a class="navbar-brand ml-5" href="/">
+        <img alt="" class="d-inline-block align-top" height="70" th:src="@{/images/pegasus.png}"
+             width="70">
+    </a>
+    <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+            class="navbar-toggler"
+            data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/randomBook">Случайная книга <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/books">Список книг <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/addBook" th:if="${session.userName} != null">Добавить книгу <span
+                        class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+
+            <p class="btn btn-primary blue my-2 my-sm-0 mr-5" data-target="#loginModal" data-toggle="modal"
+               role="button"
+               th:if="${session.userName } == null">Войти</p>
+
+            <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="loginModal" role="dialog"
+                 tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="mt-2 mr-2">
+                            <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-title text-center mb-4">
+                                <h4>Форма входа</h4>
+                            </div>
+                            <div class="d-flex flex-column text-center">
+                                <form method="POST" th:action="@{/login}">
+                                    <div class="form-group">
+                                        <input class="form-control" id="username" name="username" placeholder="Логин"
+                                               type="text">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" id="password" name="password" placeholder="Пароль"
+                                               type="password">
+                                    </div>
+                                    <div class="mt-3 form-row justify-content-center align-items-center">
+                                        <button class="btn btn-primary text-center" type="submit">Войти</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <div class="signup-section">Еще нет учетной записи? <a class="text-info" href="/register">
+                                Зарегистрироваться</a>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-item active mt-1">
+                <a class="nav-link" th:if="${session.userName} != null">Добро пожаловать,<strong
+                        th:text="' ' + ${session.userName}"><span
+                        class="sr-only">(current)</span></strong>
+                </a>
+            </div>
+
+            <li class="nav-item dropdown mr-5" th:if="${session.userName} != null">
+
+                <a class="nav-item nav-link user-action" data-toggle="dropdown" href="#">
+                    <i aria-hidden="true" class="fa fa-user-circle-o fa-2x" style="color: darkslategrey;"></i>
+                    <div class="dropdown-menu dropdown-menu-right bg-light" >
+                        <a class="dropdown-item" href="/profile/"><i class="fa fa-user"></i> Профиль</a>
+                        <a class="dropdown-item" href="/books"><i class="fa fa-book"></i> Все книги</a>
+                        <a class="dropdown-item" href="/ratedBooks"><i class="fa fa-star"></i> Оцененные книги</a>
+                        <a class="dropdown-item" href="/recommendations"><i class="fa fa-thumbs-up"></i> Рекомендации</a>
+                        <div class="divider dropdown-divider"></div>
+                        <a class="dropdown-item" th:href="@{/logout}"><i class="fa fa-power-off"></i>
+                            Выйти</a>
+                    </div>
+            </li>
+        </ul>
+    </div>
+</nav>
