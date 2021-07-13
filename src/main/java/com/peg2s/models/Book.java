@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -33,6 +34,10 @@ public class Book extends AbstractIdentifiableObject implements Serializable {
     private Double avgRating;
 
     private Boolean isApproved;
+
+    public String getAuthorsAsString() {
+        return authors.stream().map(Author::getName).collect(Collectors.joining(", "));
+    }
 }
 
 

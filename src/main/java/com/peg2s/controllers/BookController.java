@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @SessionAttributes("login")
@@ -57,10 +56,26 @@ public class BookController {
         if (request.getUserPrincipal() != null) {
             String login = request.getUserPrincipal().getName();
             model.addAttribute("login", login);
+            model.addAttribute("message", "Эй, " + login + "! Может стоит прочесть эту книгу?");
         }
         model.addAttribute("book", bookRepository.getRandomBook());
+        model.addAttribute("message", "Может стоит прочесть эту книгу?");
 
-        return "randomBook";
+        return "oneBook";
+    }
+
+    @GetMapping("/book")
+    public String getBookInfo(Model model, @RequestParam("id") String bookId) {
+        Book book = bookRepository.findById(Long.valueOf(bookId)).get();
+        model.addAttribute("message", "Книга: " + book.getTitle()
+                + ", автор: " + book.getAuthorsAsString());
+
+        if (request.getUserPrincipal() != null) {
+            String login = request.getUserPrincipal().getName();
+            model.addAttribute("login", login);
+        }
+        model.addAttribute("book", book);
+        return "oneBook";
     }
 
     @GetMapping({"/books", "/admin/books"})
@@ -75,24 +90,32 @@ public class BookController {
         return "books";
     }
 
+    @PostMapping("/searchBooks")
+    public String searchBooks(Model model, String searchText, String scope) {
+        model.addAttribute("books", bookService.searchBooks(searchText, scope));
+        model.addAttribute("genres", genreRepository.findAll());
+        return "books";
+    }
+
     @PostMapping("/books")
     public String getFilteredBooks(Model model, @RequestParam("genre") String genre) {
         model.addAttribute("books", bookService.getFilteredBooksByGenre(genre));
         model.addAttribute("genres", genreRepository.findAll());
+        model.addAttribute("selectedGenre", genre);
         return "books";
     }
 
     @GetMapping("/ratedBooks")
     public String getUserRatedBooks(Model model) {
         String login = request.getUserPrincipal().getName();
-        bookService.addRatedBooks(login,model);
+        bookService.addRatedBooks(login, model);
         return "books";
     }
 
     @GetMapping("/admin/ratedBooks")
     public String getRatedBooksForProfile(Model model) {
         String login = request.getUserPrincipal().getName();
-        bookService.addRatedBooks(login,model);
+        bookService.addRatedBooks(login, model);
         model.addAttribute("fragment", "ratedBooksFragment");
         model.addAttribute("user", userRepository.findByLoginIgnoreCase(login));
         return "adminProfile";
@@ -103,13 +126,12 @@ public class BookController {
     public void rateBook(Model model, HttpServletRequest request,
                          String selected_rating, String bookId) {
         String login = request.getUserPrincipal().getName();
-        bookService.rateBook(login, bookId,selected_rating);
+        bookService.rateBook(login, bookId, selected_rating);
         model.addAttribute("books", bookRepository.findAll());
         model.addAttribute("genres", genreRepository.findAll());
     }
 
     @GetMapping("/authorBooks")
-    @ResponseBody
     public ModelAndView getBooksByAuthor(@RequestParam String id,
                                          @RequestParam String author,
                                          Model model) {
@@ -119,9 +141,8 @@ public class BookController {
     }
 
     @GetMapping("/genreBooks")
-    @ResponseBody
     public ModelAndView getBooksByGenre(@RequestParam String genre,
-                                         Model model) {
+                                        Model model) {
         model.addAttribute("books", bookService.getFilteredBooksByGenre(genre));
         model.addAttribute("genre", genre);
         return new ModelAndView("genreBooks", "model", model);
@@ -129,7 +150,7 @@ public class BookController {
 
     @GetMapping("/recommendations")
     public String showPersonalRecommendations(Model model, HttpServletRequest request) {
-        if(request.getUserPrincipal() != null) {
+        if (request.getUserPrincipal() != null) {
             model.addAttribute("login", request.getUserPrincipal().getName());
         }
         return "underConstruction";
@@ -137,7 +158,7 @@ public class BookController {
 
     @Secured("ROLE_ADMIN")
     @GetMapping("/approveBooks")
-    public String getBooksForApprove(Model model, HttpServletRequest request, HttpSession session) {
+    public String getBooksForApprove(Model model) {
         model.addAttribute("books", bookService.getBooksForApprove());
         model.addAttribute("fragment", "approveBooksFragment");
         return "adminProfile";

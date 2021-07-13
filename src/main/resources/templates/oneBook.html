@@ -9,8 +9,7 @@
 <div th:insert="fragments/common"></div>
 <div class="justify-content-center align-items-center container d-flex h-100 mt-5 col-md-6">
     <div class="card-body">
-        <h5 class="card-title text-center" th:if="${login}!=null" th:text="'Может стоит прочитать эту книгу, ' + ${login} + '?'"></h5>
-        <h5 class="card-title text-center" th:if="${login}==null">Может стоит прочитать эту книгу?</h5>
+        <h5 class="card-title text-center" th:if="${message} != null" th:text="${message} "></h5>
         <div class="card">
             <div class="card-body">
 
@@ -33,8 +32,10 @@
                 <div th:each="genre: ${book.genres}" th:if="${book.genres.size()==1}">
                     <div th:text="'Жанр: ' + ${genre}"></div>
                 </div>
-
+                <hr>
                 <div th:text="'Аннотация: ' + ${book.annotation}"></div>
+                <hr>
+                <div th:text="'Описание: ' + ${book.description}"></div>
 
             </div>
         </div>

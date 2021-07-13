@@ -30,6 +30,17 @@ public class BookService {
         this.authorRepository = authorRepository;
     }
 
+    public List<Book> searchBooks(String text, String scope) {
+        switch (scope) {
+            case "По автору":
+                return bookRepository.findAllByAuthors_NameContains(text);
+            case "По названию":
+                return bookRepository.findAllByTitleContains(text);
+            default:
+            return bookRepository.searchEverywhere(text, text, text, text);
+        }
+    }
+
     public void rateBook(String login, String bookId, String selected_rating) {
         Integer rating = Integer.parseInt(selected_rating);
         Long book_id = Long.valueOf(bookId);

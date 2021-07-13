@@ -31,33 +31,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/", "/register", "/images/**", "/randomBook", "/books",
-                            "fragments/**", "/authorBooks", "/genreBooks"
-                    )
-                    .permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/", "/register", "/images/**", "/randomBook", "/books",
+                        "fragments/**", "/authorBooks", "/genreBooks", "/searchBooks/**", "/book/**"
+                )
+                .permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                    .failureUrl("/loginError")
-                    .successHandler((request, response, authentication) -> {
-                        request.getSession().setAttribute("userName",
-                                ((User) authentication.getPrincipal()).getLogin());
-                        response.sendRedirect("/");
-                    })
-                    .permitAll()
-                .and()
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")
-                    .permitAll();
-    }
+                .failureUrl("/loginError")
+                .successHandler((request, response, authentication) -> {
+                    request.getSession().setAttribute("userName",
+                            ((User) authentication.getPrincipal()).getLogin());
+                                        response.sendRedirect("/");
+                            })
+                            .permitAll()
+                            .and()
+                            .logout()
+                            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                            .logoutSuccessUrl("/")
+                            .permitAll();
+                }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userService)
-                .passwordEncoder(passwordEncoder);
+        @Override
+        protected void configure (AuthenticationManagerBuilder auth) throws Exception {
+            auth
+                    .userDetailsService(userService)
+                    .passwordEncoder(passwordEncoder);
+        }
     }
-}
