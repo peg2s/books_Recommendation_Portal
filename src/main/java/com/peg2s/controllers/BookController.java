@@ -1,6 +1,7 @@
 package com.peg2s.controllers;
 
 import com.peg2s.models.Book;
+import com.peg2s.models.PersonalRating;
 import com.peg2s.repositories.BookRepository;
 import com.peg2s.repositories.GenreRepository;
 import com.peg2s.repositories.RatingRepository;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Controller
 @SessionAttributes("login")
@@ -53,12 +55,15 @@ public class BookController {
 
     @GetMapping("/randomBook")
     public String getRandomBook(Model model) {
+        Book book = bookRepository.getRandomBook();
         if (request.getUserPrincipal() != null) {
             String login = request.getUserPrincipal().getName();
-            model.addAttribute("login", login);
+            Optional<PersonalRating> rating = ratingRepository.findByBook_IdAndUser_Login(book.getId(), login);
+            rating.ifPresent(personalRating -> model.addAttribute("rating", personalRating));
             model.addAttribute("message", "Эй, " + login + "! Может стоит прочесть эту книгу?");
+            model.addAttribute("login", login);
         }
-        model.addAttribute("book", bookRepository.getRandomBook());
+        model.addAttribute("book", book);
         model.addAttribute("message", "Может стоит прочесть эту книгу?");
 
         return "oneBook";
@@ -69,10 +74,11 @@ public class BookController {
         Book book = bookRepository.findById(Long.valueOf(bookId)).get();
         model.addAttribute("message", "Книга: " + book.getTitle()
                 + ", автор: " + book.getAuthorsAsString());
-
         if (request.getUserPrincipal() != null) {
             String login = request.getUserPrincipal().getName();
             model.addAttribute("login", login);
+            Optional<PersonalRating> rating = ratingRepository.findByBook_IdAndUser_Login(book.getId(), login);
+            rating.ifPresent(personalRating -> model.addAttribute("rating", personalRating));
         }
         model.addAttribute("book", book);
         return "oneBook";

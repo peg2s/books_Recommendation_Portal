@@ -37,6 +37,4 @@ public interface BookRepository extends CrudRepository<Book, Long> {
             "or upper(b.annotation) like concat('%', upper(?3), '%')" +
             "or upper(a.name) like concat('%', upper(?4), '%')", nativeQuery = true)
     List<Book> searchEverywhere(String param1, String param2, String param3, String param4);
-
-//    List<Book> findAllByTitleLikeOrDescriptionLikeOrAnnotationLike(String text);
 }

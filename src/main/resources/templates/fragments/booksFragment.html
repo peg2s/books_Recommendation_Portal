@@ -1,35 +1,35 @@
 <div th:fragment="booksFragment">
-    <div th:with="scopes = ${ {'По автору', 'По названию'} }" class="container">
-    <div class="row">
-        <div class="col-md-7">
-            <form class="form-inline input-group-md mt-3 justify-content-center align-items-center container d-flex" method="POST" th:action="@{/searchBooks}">
-                <input class="form-control col-sm-12 col-lg-7 mr-sm-2" type="search" name="searchText" placeholder="Введите текст для поиска..." aria-label="Search">
-                <select class="custom-select custom-select-md col-md-3 col-sm-6 mx-1" name="scope">
+    <div th:with="scopes = ${ {'По автору', 'По названию'} }" class="container col-9">
+    <div class="row mt-1">
+        <div class="col-md-6">
+            <form class="form-inline justify-content-center align-items-center mx-1 my-1" method="POST" th:action="@{/searchBooks}">
+                <input class="form-control col-sm-12 col-lg-6 mr-sm-2 mx-1 my-1" type="search" name="searchText" placeholder="Введите текст для поиска..." aria-label="Search">
+                <select class="custom-select custom-select-md col-md-3 col-sm-6 mr-1 my-1" style="font-size:85%" name="scope">
                     <option th:value="all">Везде</option>
                     <p  th:each="scope : ${scopes}">
                         <option th:text="${scope}" th:value="${scope}"></option>
                     </p>
                 </select>
-                <button class="ml-2 btn btn-primary text-center" type="submit">Поиск</button>
+                <button class="btn btn-primary text-center mx-1 my-1" type="submit">Поиск</button>
             </form>
         </div>
-        <div class="col-sm">
-            <form class="mt-3 justify-content-center align-items-center container d-flex" method="POST" th:action="@{/books}">
-                <select class="custom-select custom-select-md col-md-7" name="genre">
+        <div class="col-md-6">
+            <form class="form-inline justify-content-center align-items-center mx-1 my-1" method="POST" th:action="@{/books}">
+                <select class="custom-select custom-select-md col-md-8 col-sm-6 mx-1 my-1" name="genre">
                     <option th:value="all">Все жанры</option>
                     <p th:each="genre : ${genres}">
                         <option selected th:if="${#strings.equals(selectedGenre, genre)}" th:text="${genre}" th:value="${genre}"></option>
                         <option th:text="${genre}" th:value="${genre}"></option>
                     </p>
                 </select>
-                <button class="ml-3 btn btn-primary text-center" type="submit">Отфильтровать</button>
+                <button class="btn btn-primary text-center mx-1 my-1" type="submit">Отфильтровать</button>
             </form>
         </div>
     </div>
 </div>
     <div class="justify-content-center align-items-center container d-flex h-100">
 
-        <div class="card-columns container mx-10 my-3" th:if="${books}!=null">
+        <div class="card-columns container mx-10 mt-1 mb-3" th:if="${books}!=null">
             <div th:each="book : ${books}">
                 <div class="card bg-light">
                     <div class="card-body">
@@ -59,12 +59,11 @@
                                th:text="${genre}"></a>
                         </div>
 
-                        <div th:if="${#strings.length(book.annotation)} > 150" th:inline="text">
-                            Аннотация: + [[${#strings.substring(book.annotation,0,150)}]]...
+                        <div th:inline="text">
+                            Аннотация: [[${book.getCroppedAnnotation()}]]
                             <br>
                             <a th:href="'/book?id='+${book.id}">Подробнее</a>
                         </div>
-                        <div th:if="${#strings.length(book.annotation)} < 150" th:text="'Аннотация: ' + ${book.annotation}"></div>
 
                         <form class="form-group" method="post" th:action="@{/rateBook}" th:id="${book.id}+'class'"
                               th:if="${login} != null"

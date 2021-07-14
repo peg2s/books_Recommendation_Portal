@@ -37,7 +37,7 @@ public class BookService {
             case "По названию":
                 return bookRepository.findAllByTitleContains(text);
             default:
-            return bookRepository.searchEverywhere(text, text, text, text);
+                return bookRepository.searchEverywhere(text, text, text, text);
         }
     }
 
@@ -131,10 +131,6 @@ public class BookService {
         Book book = bookRepository.findById(Long.valueOf(bookId)).get();
         book.setIsApproved(isApprovedByAdmin != null);
         bookRepository.save(book);
-    }
-
-    public void importBooksToDB() {
-
     }
 }
 

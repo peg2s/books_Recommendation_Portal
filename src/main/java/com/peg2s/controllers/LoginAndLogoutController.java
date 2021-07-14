@@ -24,7 +24,9 @@ public class LoginAndLogoutController {
 
     @GetMapping("/loginError")
     public String showLoginError(Model model) {
-       model.addAttribute("loginError", "Неправильный логин или пароль");
+       model.addAttribute("loginError", "Неправильный логин или пароль. " +
+               "<br> " +
+               "Эта ошибка также может возникать, если вы не активировали свою учетную запись по ссылке, отправленной на ваш почтовый ящик.");
         return "login";
     }
 }

@@ -70,17 +70,17 @@
                 </div>
             </div>
 
-            <div class="nav-item active mt-1">
-                <a class="nav-link" th:if="${session.userName} != null">Добро пожаловать,<strong
-                        th:text="' ' + ${session.userName}"><span
-                        class="sr-only">(current)</span></strong>
-                </a>
-            </div>
+
 
             <li class="nav-item dropdown mr-5" th:if="${session.userName} != null">
 
                 <a class="nav-item nav-link user-action" data-toggle="dropdown" href="#">
-                    <i aria-hidden="true" class="fa fa-user-circle-o fa-2x" style="color: darkslategrey;"></i>
+                        <span class="nav-link dropdown-toggle" th:if="${session.userName} != null">Добро пожаловать,<strong
+                                th:text="' ' + ${session.userName}">
+                        <span class="sr-only">(current)
+                        </span></strong>
+                        <i aria-hidden="true" class="ml-3 fa fa-user-circle-o fa-2x" style="color: darkslategrey;"></i>
+                        </span>
                     <div class="dropdown-menu dropdown-menu-right bg-light" >
                         <a class="dropdown-item" href="/profile/"><i class="fa fa-user"></i> Профиль</a>
                         <a class="dropdown-item" href="/books"><i class="fa fa-book"></i> Все книги</a>

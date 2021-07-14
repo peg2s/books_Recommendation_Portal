@@ -38,6 +38,14 @@ public class Book extends AbstractIdentifiableObject implements Serializable {
     public String getAuthorsAsString() {
         return authors.stream().map(Author::getName).collect(Collectors.joining(", "));
     }
+
+    public String getCroppedAnnotation() {
+        if (annotation.length() > 150) {
+            String croppedAnnotation = annotation.substring(0, 150);
+            return croppedAnnotation.substring(0, croppedAnnotation.lastIndexOf(" ")).concat("...");
+        }
+        return annotation;
+    }
 }
 
 

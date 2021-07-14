@@ -48,6 +48,10 @@ public class User implements UserDetails {
 
     private String email;
 
+    private String activationCode;
+
+    private boolean isActive;
+
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
@@ -93,10 +97,14 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive;
     }
 
     public boolean isAdmin() {
         return roles.contains(Role.ROLE_ADMIN);
+    }
+
+    public void setActive(boolean b) {
+        this.isActive = b;
     }
 }
