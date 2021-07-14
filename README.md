@@ -1,28 +1,37 @@
-# О проекте
+# About project
 
-### Рекомендательный сервис книг.
-На данный момент реализовано:
+### This is a book recommendation service
+Current functionality:
 
-* Добавление новой книги
-* Просмотр списка книг и сортировка по жанру
-* Для "смотрибельности" и чтоб избавиться от пустоты на главную страницу парсятся цитаты с bash.org.ru
-* Механизм регистрации и авторизации
-* Админ-панель для пользователей с ролью admin
-* Оценка книг для каждого конкретного пользователя и просмотр уже оцененных книг.
-### В проекте используется
+* register/login with activation via email
+* adding new books
+* books list view, search by author/title/everywhere, filtering by genre
+* when books are displayed in card-columns, the annotation is truncated
+  to the nearest space character 150 and the link "... Read more" is added
+* random book from DB for each click on menu link "Random book"
+* administrative functions for users with admin rules (premod of books, editing users, etc.)
+* possibility to rate book and view all rated books for each authorized user
+
+### Stack
 
 * Spring Boot, Spring Security
 * Lombok
 * PostgreSQL
-* jSoup
+* Bootstrap
+* JS
+* Thymeleaf
 
-### В проекте используется
-В дальнейшем планируется сделать следующее:
-* добавить возможность оценивать книги для зарегистрированных и авторизованных пользователей
-* полноценный личный кабинет для пользователей с историей оценок по книгам
-* подружить проект с каким-нибудь брокером сообщений
-* проработать вопросы кэширования данных в БД
-* настроить интеграцию с рекомендательной системой, написанной на python.
-### Посмотреть и потыкать текущую версию
+### Backlog
+Coming soon:
+
+* password recovery via email by unique link
+* extended account profile for user role
+* RabbitMQ/ ActiveMq/ Kafka?
+* database caching
+* integration with ML model written on python
+* minor fixes and improvements
+
+### View and test
+
 https://lit-hamlet-12359.herokuapp.com/
-Настроен автодеплой на коммиты в develop.
+Autodeploy when git push detected. Test admin credentionals is admin/password.
