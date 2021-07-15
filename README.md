@@ -4,6 +4,7 @@
 Current functionality:
 
 * register/login with activation via email
+* password reset via email by unique link
 * adding new books
 * books list view, search by author/title/everywhere, filtering by genre
 * when books are displayed in card-columns, the annotation is truncated
@@ -24,7 +25,6 @@ Current functionality:
 ### Backlog
 Coming soon:
 
-* password recovery via email by unique link
 * extended account profile for user role
 * RabbitMQ/ ActiveMq/ Kafka?
 * database caching
