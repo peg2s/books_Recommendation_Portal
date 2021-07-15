@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -113,5 +114,58 @@ public class UserService implements UserDetailsService {
             }
         }
         return false;
+    }
+
+    public String getPasswordResetLink(Model model, String login) {
+        User user = userRepository.findByLoginIgnoreCase(login);
+        if (user != null) {
+            user.setPasswordResetCode(UUID.randomUUID().toString());
+            userRepository.save(user);
+            mailService.send(user.getEmail(), "Ссылка для сброса пароля",
+                    String.format("%s %s, вы или кто-то от вашего имени запросил сброс пароля к вашей учетной записи. \n" +
+                                    "\nЕсли вы не запрашивали сброс пароля, то свяжитесь с администратором в telegram: @peg2sus \n\n" +
+                                    "Для сброса пароля к учетной записи перейдите по ссылке:\n https://lit-hamlet-12359.herokuapp.com/common/resetPassword?id=%s&code=%s" +
+                                    "\n\n" +
+                                    "Отвечать на данное письмо не нужно, так как оно отправлено вежливым, но очень стеснительным роботом.",
+                            user.getSex().equals(Sex.MALE) ? "Уважаемый" : "Уважаемая",
+                            user.getFullName(),
+                            user.getLogin(),
+                            user.getPasswordResetCode()));
+            model.addAttribute("loginNotification", "Ссылка для сброса пароля отправлена на почтовый ящик, указанный при регистрации.");
+        } else {
+            model.addAttribute("loginNotification", "Пользователь с таким логином не найден.");
+            return "login";
+        }
+        return "login";
+    }
+
+    public String resetPassword(String userLogin, String verificationCode, Model model) {
+        User user = userRepository.findByLoginIgnoreCase(userLogin);
+        if (user != null && user.getPasswordResetCode() != null) {
+            if (user.getPasswordResetCode().equals(verificationCode)
+                    && user.getPasswordResetCode() != null) {
+
+                String password = new Random().ints(10, 33, 122).collect(StringBuilder::new,
+                        StringBuilder::appendCodePoint, StringBuilder::append)
+                        .toString();
+
+                user.setPassword(passwordEncoder.encode(password));
+                mailService.send(user.getEmail(), "Ваш временный пароль для доступа на портал.",
+                        String.format("%s %s, пароль к вашей учетной записи сброшен. Ваш новый пароль: %s \n" +
+                                        "Смените его при первой же возможности. \n\n" +
+                                        "Отвечать на данное письмо не нужно, так как оно отправлено вежливым, но очень стеснительным роботом.",
+                                user.getSex().equals(Sex.MALE) ? "Уважаемый" : "Уважаемая",
+                                user.getFullName(),
+                                password));
+                user.setPasswordResetCode(null);
+                userRepository.save(user);
+                model.addAttribute("loginNotification", "Пароль успешно сброшен. " +
+                        "<br>" +
+                        "Временный пароль отправлен вам на почту. Смените его при первой возможности.");
+                return "login";
+            }
+        }
+        model.addAttribute("loginNotification", "Что-то пошло не так. Попробуйте запросить сброс повторно.");
+        return "login";
     }
 }

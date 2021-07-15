@@ -50,6 +50,8 @@ public class User implements UserDetails {
 
     private String activationCode;
 
+    private String passwordResetCode;
+
     private boolean isActive;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

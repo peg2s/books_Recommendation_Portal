@@ -7,7 +7,7 @@
 <body>
 <div th:insert="fragments/header"></div>
 
-<div th:if="${loginError}!= null" th:utext="${loginError}" class="alert alert-warning text-center mt-3" role="alert"></div>
+<div th:if="${loginNotification}!= null" th:utext="${loginNotification}" class="alert alert-warning text-center mt-3" role="alert"></div>
 
 <div class="justify-content-center align-items-center container d-flex h-100">
     <form th:action="@{/login}" method="POST">
