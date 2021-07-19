@@ -18,11 +18,18 @@ import java.util.stream.Collectors;
 public class Book extends AbstractIdentifiableObject implements Serializable {
 
     private String title;
-
-    @ManyToMany(mappedBy = "books", cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "AUTHOR_BOOKS",
+            joinColumns = @JoinColumn(name = "BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID")
+    )
     private Collection<Author> authors = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "books", cascade = CascadeType.ALL)
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "BOOK_GENRES",
+            joinColumns = @JoinColumn(name = "BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GENRE"))
     private Collection<Genre> genres = new ArrayList<>();
 
     private String year;
@@ -45,6 +52,11 @@ public class Book extends AbstractIdentifiableObject implements Serializable {
             return croppedAnnotation.substring(0, croppedAnnotation.lastIndexOf(" ")).concat("...");
         }
         return annotation;
+    }
+
+    public boolean findAnyMatch(String text) {
+        return title.contains(text) || getAuthorsAsString().contains(text)
+                || description.contains(text) || annotation.contains(text);
     }
 }
 

@@ -33,9 +33,9 @@ public class BookService {
     public List<Book> searchBooks(String text, String scope) {
         switch (scope) {
             case "По автору":
-                return bookRepository.findAllByAuthors_NameContains(text);
+                return bookRepository.findAllByIsApprovedTrueAndAuthors_NameContains(text);
             case "По названию":
-                return bookRepository.findAllByTitleContains(text);
+                return bookRepository.findAllByIsApprovedTrueAndTitleContains(text);
             default:
                 return bookRepository.searchEverywhere(text, text, text, text);
         }
@@ -80,7 +80,7 @@ public class BookService {
         if (genre.equalsIgnoreCase("all")) {
             return (List<Book>) bookRepository.findAll();
         } else {
-            return bookRepository.findAllByGenres_Genre(genre);
+            return bookRepository.findAllByIsApprovedTrueAndGenres_Genre(genre);
         }
     }
 
@@ -123,13 +123,23 @@ public class BookService {
         return book;
     }
 
-    public List<Book> getBooksForApprove() {
-        return bookRepository.findByIsApprovedFalse();
+    public List<Book> getBooksForModeration(String scope) {
+        switch (scope) {
+            case "Только непроверенные":
+                return bookRepository.findByIsApprovedFalse();
+            case "Только проверенные":
+                return bookRepository.findByIsApprovedTrue();
+            case "Все книги":
+            default:
+                return (List<Book>) bookRepository.findAll();
+        }
     }
 
-    public void approveBooks(String bookId, String isApprovedByAdmin) {
-        Book book = bookRepository.findById(Long.valueOf(bookId)).get();
-        book.setIsApproved(isApprovedByAdmin != null);
+    public void removeBook(String bookId) {
+        bookRepository.deleteById(Long.valueOf(bookId));
+    }
+
+    public void editBookByAdmin(Book book) {
         bookRepository.save(book);
     }
 }

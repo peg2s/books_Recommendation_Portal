@@ -6,7 +6,7 @@
                 <input class="form-control col-sm-12 col-lg-6 mr-sm-2 mx-1 my-1" type="search" name="searchText" placeholder="Введите текст для поиска..." aria-label="Search">
                 <select class="custom-select custom-select-md col-md-3 col-sm-6 mr-1 my-1" style="font-size:85%" name="scope">
                     <option th:value="all">Везде</option>
-                    <p  th:each="scope : ${scopes}">
+                    <p th:each="scope : ${scopes}">
                         <option th:text="${scope}" th:value="${scope}"></option>
                     </p>
                 </select>
@@ -27,6 +27,8 @@
         </div>
     </div>
 </div>
+    <h6 class="alert alert-info text-center mt-3" th:if="${message} != null" th:text="${message}"></h6>
+
     <div class="justify-content-center align-items-center container d-flex h-100">
 
         <div class="card-columns container mx-10 mt-1 mb-3" th:if="${books}!=null">

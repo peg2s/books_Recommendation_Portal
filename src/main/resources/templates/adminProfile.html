@@ -70,7 +70,7 @@
     })
 </script>
 <div class="row h-100">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-2" style="min-width: 280px">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-3">
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-light h-100 border-right">
             <ul class="nav nav-pills flex-column mb-auto mt-2">
                 <li class="nav-item"><a class="nav-link" href="/admin/" th:id="profileFragment"><i
@@ -83,7 +83,7 @@
                         <li class="nav-item"><a class="nav-link" href="/admin/users" th:id="userListFragment">Профили
                             пользователей</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Добавить книгу</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/approveBooks" th:id="approveBooksFragment">Модерация
+                        <li class="nav-item"><a class="nav-link" href="/booksModeration" th:id="approveBooksFragment">Модерация
                             книг</a></li>
                     </ul>
                 </li>
@@ -98,7 +98,7 @@
         </div>
 
     </div>
-    <div class="col justify-content-md-center">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
         <div class="container-fluid">
 
             <th:block th:include="~{${'fragments/' + fragment} :: ${fragment}}"></th:block>

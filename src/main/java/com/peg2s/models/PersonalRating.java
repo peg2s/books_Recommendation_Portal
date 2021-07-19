@@ -12,12 +12,12 @@ public class PersonalRating extends AbstractIdentifiableObject{
 
     private int rate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BOOK_ID")
     @EqualsAndHashCode.Exclude @ToString.Exclude
     private Book book;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @EqualsAndHashCode.Exclude @ToString.Exclude
     private User user;

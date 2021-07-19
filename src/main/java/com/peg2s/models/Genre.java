@@ -13,10 +13,7 @@ import java.util.Collection;
 @EqualsAndHashCode(callSuper = true)
 public class Genre extends AbstractIdentifiableObject {
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "BOOK_GENRES",
-            joinColumns = @JoinColumn(name = "GENRE"),
-            inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+    @ManyToMany(mappedBy = "genres", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @EqualsAndHashCode.Exclude @ToString.Exclude
     private Collection<Book> books = new ArrayList<>();
 

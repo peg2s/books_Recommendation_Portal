@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
-@SessionAttributes("login")
+@SessionAttributes({"login", "books"})
 public class BookController {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
@@ -98,9 +101,32 @@ public class BookController {
 
     @PostMapping("/searchBooks")
     public String searchBooks(Model model, String searchText, String scope) {
-        model.addAttribute("books", bookService.searchBooks(searchText, scope));
+        List<Book> searchResults = bookService.searchBooks(searchText, scope);
+        if (searchResults.size() != 0) {
+            model.addAttribute("books", searchResults);
+        } else {
+            model.addAttribute("message", "По данному запросу мы не нашли ни одной книги. ☹");
+        }
         model.addAttribute("genres", genreRepository.findAll());
         return "books";
+    }
+
+    @PostMapping("/moderationSearch")
+    public String moderationSearch(Model model, String searchText, String selectedScope) {
+        List<Book> listForSearch = (List<Book>) model.getAttribute("books");
+        if (listForSearch.size() != 0) {
+            listForSearch = listForSearch.stream()
+                    .filter(book -> book.findAnyMatch(searchText))
+                    .collect(Collectors.toList());
+            model.addAttribute("books", listForSearch);
+        } else {
+            model.addAttribute("message", "По данному запросу мы не нашли ни одной книги. ☹");
+        }
+        model.addAttribute("genres", genreRepository.findAll());
+        model.addAttribute("fragment", "approveBooksFragment");
+        model.addAttribute("selectedScope", selectedScope);
+
+        return "adminProfile";
     }
 
     @PostMapping("/books")
@@ -141,7 +167,7 @@ public class BookController {
     public ModelAndView getBooksByAuthor(@RequestParam String id,
                                          @RequestParam String author,
                                          Model model) {
-        model.addAttribute("books", bookRepository.findAllByAuthors_Id(Long.parseLong(id)));
+        model.addAttribute("books", bookRepository.findAllByIsApprovedTrueAndAuthors_Id(Long.parseLong(id)));
         model.addAttribute("author", author);
         return new ModelAndView("authorBooks", "model", model);
     }
@@ -163,19 +189,44 @@ public class BookController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/approveBooks")
-    public String getBooksForApprove(Model model) {
-        model.addAttribute("books", bookService.getBooksForApprove());
+    @GetMapping("/booksModeration")
+    public String getBooksForModeration(Model model) {
+        if (!model.containsAttribute("selectedScope")) {
+            model.addAttribute("selectedScope", "Только непроверенные");
+        }
+        model.addAttribute("books",
+                bookService.getBooksForModeration((String) Objects.requireNonNull(
+                        model.getAttribute("selectedScope"))));
         model.addAttribute("fragment", "approveBooksFragment");
         return "adminProfile";
     }
 
     @Secured("ROLE_ADMIN")
-    @PostMapping("/approveBooks")
-    public String approveBooks(Model model, String id, String isApproved) {
-        bookService.approveBooks(id, isApproved);
-        model.addAttribute("books", bookService.getBooksForApprove());
+    @PostMapping("/booksModeration")
+    public String bookModeration(Model model, String selectedScope) {
+        model.addAttribute("books", bookService.getBooksForModeration(selectedScope));
+        model.addAttribute("selectedScope", selectedScope);
         model.addAttribute("fragment", "approveBooksFragment");
         return "adminProfile";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/removeBook")
+    public String removeBook(Model model, @RequestParam String id) {
+        bookService.removeBook(id);
+        model.addAttribute("books",
+                bookService.getBooksForModeration((String) Objects.requireNonNull(
+                        model.getAttribute("selectedScope"))));
+        model.addAttribute("fragment", "approveBooksFragment");
+        return "adminProfile";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/editBook")
+    public String editBook(Model model, Book book) {
+        bookService.editBookByAdmin(book);
+        model.addAttribute("books", null);
+        model.addAttribute("fragment", "approveBooksFragment");
+        return "redirect:/booksModeration";
     }
 }

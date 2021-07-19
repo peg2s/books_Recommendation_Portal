@@ -16,11 +16,7 @@ public class Author extends AbstractIdentifiableObject{
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "AUTHOR_BOOKS",
-            joinColumns = @JoinColumn(name = "AUTHOR_ID"),
-            inverseJoinColumns = @JoinColumn(name = "BOOK_ID")
-    )
+    @ManyToMany(mappedBy = "authors", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @EqualsAndHashCode.Exclude @ToString.Exclude
     private Collection<Book> books = new ArrayList<>();
 
