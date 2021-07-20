@@ -42,8 +42,15 @@ public class BookController {
 
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/addBook")
-    public String getAddBookForm() {
+    public String getAddBookForm(Model model) {
         return "addBook";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/admin/addBook")
+    public String getAddBookAdminForm(Model model) {
+        model.addAttribute("fragment", "addBookFragment");
+        return "adminProfile";
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -65,9 +72,10 @@ public class BookController {
             rating.ifPresent(personalRating -> model.addAttribute("rating", personalRating));
             model.addAttribute("message", "Эй, " + login + "! Может стоит прочесть эту книгу?");
             model.addAttribute("login", login);
+        } else {
+            model.addAttribute("message", "Может стоит прочесть эту книгу?");
         }
         model.addAttribute("book", book);
-        model.addAttribute("message", "Может стоит прочесть эту книгу?");
 
         return "oneBook";
     }
